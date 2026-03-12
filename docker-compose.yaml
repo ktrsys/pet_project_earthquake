@@ -77,7 +77,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-  user: "${AIRFLOW_UID:-50000}:0"
+  user: "${AIRFLOW_UID:-1000}:0"
   depends_on:
     &airflow-common-depends-on
     redis:
@@ -116,7 +116,15 @@ services:
     container_name: metabase
     ports:
       - "3000:3000"
-      
+    environment:
+      - MB_PLUGINS_DIR=/plugins
+      - MB_DB_TYPE=h2
+      - MB_DB_FILE=/app/data/metabase.db
+    volumes:
+      - ./metabase/data:/app/data
+      - ./data:/app/duckdb_storage
+    restart: always
+
   postgres:
     image: postgres:13
     environment:

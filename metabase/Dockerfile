@@ -1,12 +1,9 @@
-FROM eclipse-temurin:17-jdk-focal
+FROM metabase/metabase:v0.53.3
 
-ENV MB_PLUGINS_DIR=/plugins
+# Используем путь относительно контекста сборки
+# Если в docker-compose.yaml context: ./metabase, то просто имя файла
+# Если context: ., то metabase/duckdb.metabase-driver.jar
+COPY ./metabase/duckdb.metabase-driver.jar /plugins/
 
-RUN mkdir -p /plugins
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-RUN curl -L https://github.com -o metabase.jar
-ADD https://github.com/MotherDuck-Open-Source/metabase_duckdb_driver/releases/download/0.2.12-b/duckdb.metabase-driver.jar /home/plugins/
-
-RUN chmod 744 /home/plugins/duckdb.metabase-driver.jar
-
-CMD ["java", "-jar", "/home/metabase.jar"]
+USER root
+RUN chmod 644 /plugins/duckdb.metabase-driver.jar
