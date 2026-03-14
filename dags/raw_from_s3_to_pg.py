@@ -141,7 +141,7 @@ with DAG(
     description=SHORT_DESCRIPTION,
     concurrency=1,
     max_active_tasks=1,
-    max_active_runs=1,
+    max_active_runs=3,
 ) as dag:
     dag.doc_md = LONG_DESCRIPTION
 

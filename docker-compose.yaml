@@ -92,13 +92,15 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-    restart: on-failure
+    restart: "no"
     ports:
       - "5445:5432"
+    volumes:
+      - postgres_dwh_volume:/var/lib/postgresql/data
 
   minio:
     image: minio/minio:RELEASE.2025-02-18T16-25-55Z
-    restart: on-failure
+    restart: "no"
     volumes:
       - ./data:/data
     environment:
@@ -123,7 +125,7 @@ services:
     volumes:
       - ./metabase/data:/app/data
       - ./data:/app/duckdb_storage
-    restart: on-failure
+    restart: "no"
 
   postgres:
     image: postgres:13
@@ -138,7 +140,7 @@ services:
       interval: 10s
       retries: 5
       start_period: 5s
-    restart: on-failure
+    restart: "no"
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -152,7 +154,7 @@ services:
       timeout: 30s
       retries: 50
       start_period: 30s
-    restart: on-failure
+    restart: "no"
 
   airflow-webserver:
     <<: *airflow-common
@@ -165,7 +167,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    restart: on-failure
+    restart: "no"
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -180,7 +182,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    restart: on-failure
+    restart: "no"
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -203,7 +205,7 @@ services:
       # Required to handle warm shutdown of the celery workers properly
       # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
       DUMB_INIT_SETSID: "0"
-    restart: on-failure
+    restart: "no"
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -218,7 +220,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    restart: on-failure
+    restart: "no"
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -317,7 +319,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    restart: on-failure
+    restart: "no"
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -325,3 +327,4 @@ services:
 
 volumes:
   postgres-db-volume:
+  postgres_dwh_volume:
